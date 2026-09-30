@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Happy 17th, Maya!</title>
+    <!-- Elegant, modern font pairings -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;900&family=Fredoka:wght@400;500;600&family=Caveat:wght@600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        /* --- BASE AESTHETIC --- */
+        body {
+            margin: 0; padding: 0; font-family: 'Fredoka', sans-serif;
+            color: #5a3d5c; text-align: center; overflow-x: hidden; transition: color 0.8s ease;
+        }
+
+        /* --- RESTORED IMAGE WALLPAPERS WITH SOFT BLEND --- */
+        .bg-light, .bg-dark {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-size: cover; background-position: center; z-index: -2; transition: opacity 1.5s ease-in-out;
+        }
+        .bg-light { background-image: url('bg-light.jpg'); opacity: 1; }
+        .bg-dark { background-image: url('bg-dark.jpg'); opacity: 0; }
+        
+        .bg-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
+            background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,182,193,0.1) 100%);
+            pointer-events: none; transition: background 1.5s ease;
+        }
+        
+        body.dark-mode .bg-light { opacity: 0; }
+        body.dark-mode .bg-dark { opacity: 1; }
+        body.dark-mode { color: #e0d6ff; }
+        body.dark-mode .bg-overlay { background: linear-gradient(135deg, rgba(20,10,40,0.6) 0%, rgba(123,44,191,0.2) 100%); }
+
+        /* --- MODERN HEADER --- */
+        header { padding: 6vh 15px 2vh 15px; position: relative; z-index: 10; }
+        .interactive-header {
+            font-family: 'Outfit', sans-serif; font-size: 5.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px;
+            margin: 0; cursor: pointer; background: linear-gradient(to right, #ff758f, #c282ff, #ffb3c6, #ff758f);
+            background-size: 200% auto; color: transparent; -webkit-background-clip: text; background-clip: text;
+            animation: textGradientMove 5s linear infinite; transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            filter: drop-shadow(0 8px 25px rgba(255, 117, 143, 0.4));
+        }
+        .interactive-header:hover { letter-spacing: 8px; transform: scale(1.02); filter: drop-shadow(0 10px 30px rgba(255, 255, 255, 0.8)); }
+        body.dark-mode .interactive-header { filter: drop-shadow(0 8px 25px rgba(0, 0, 0, 0.6)); }
+        body.dark-mode .interactive-header:hover { filter: drop-shadow(0 10px 30px rgba(194, 130, 255, 0.8)); }
+        @keyframes textGradientMove { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
+
+        /* --- GLOWING UNLOCK ORB --- */
+        .gift-wrapper { margin: 20px auto 60px auto; min-height: 160px; position: relative; z-index: 10; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+        .glass-orb {
+            width: 150px; height: 150px; border-radius: 50%; background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(15px); border: 2px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 10px 40px rgba(255, 117, 143, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.8);
+            display: flex; justify-content: center; align-items: center; cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); animation: orbFloat 3s ease-in-out infinite alternate;
+        }
+        .glass-orb:hover { transform: scale(1.15); box-shadow: 0 15px 50px rgba(255, 117, 143, 0.6), inset 0 0 40px #fff; border-color: #fff; }
+        body.dark-mode .glass-orb { background: rgba(0,0,0,0.4); border-color: rgba(194, 130, 255, 0.6); box-shadow: 0 10px 40px rgba(157, 78, 221, 0.5), inset 0 0 25px rgba(194,130,255,0.5); }
+        body.dark-mode .glass-orb:hover { box-shadow: 0 15px 50px rgba(194, 130, 255, 0.7), inset 0 0 40px rgba(255,255,255,0.8); }
+        .orb-inner { font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.1rem; color: #ff758f; letter-spacing: 1.5px; text-shadow: 0 0 10px #fff; text-align: center; }
+        body.dark-mode .orb-inner { color: #c282ff; text-shadow: 0 0 10px #000; }
+        @keyframes orbFloat { 0% { transform: translateY(0px); } 100% { transform: translateY(-15px); } }
+
+        #gift-message {
+            display: none; font-family: 'Outfit', sans-serif; font-size: 4rem; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; margin: 0;
+            background: linear-gradient(135deg, #ff758f, #c282ff, #ffb3c6); background-size: 200% auto; -webkit-background-clip: text; color: transparent;
+            animation: smoothReveal 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; filter: drop-shadow(0px 10px 15px rgba(255,255,255,0.9));
+        }
+        body.dark-mode #gift-message { filter: drop-shadow(0px 10px 15px rgba(0,0,0,0.9)); }
+        @keyframes smoothReveal { 0% { transform: scale(0.5) translateY(20px); opacity: 0; filter: blur(10px); } 100% { transform: scale(1) translateY(0); opacity: 1; filter: blur(0px); } }
+
+        /* --- ELEGANT PREMIUM LAYOUT --- */
+        .content-flow { display: flex; flex-direction: column; align-items: center; width: 100%; padding-bottom: 120px; z-index: 10; position: relative; gap: 45px; }
+        
+        .fade-section { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.25, 1, 0.5, 1); }
+        .fade-section.visible { opacity: 1; transform: translateY(0); }
+
+        section {
+            background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border-radius: 40px; border: 1px solid rgba(255, 255, 255, 0.9); margin: 0 auto; padding: 50px 45px; 
+            width: 85%; max-width: 780px; box-sizing: border-box; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08), inset 0 0 20px rgba(255,255,255,0.5); 
+            transition: transform 0.4s ease, box-shadow 0.4s ease; position: relative;
+        }
+        section:hover { transform: translateY(-5px); box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12), inset 0 0 20px rgba(255,255,255,0.6); }
+        body.dark-mode section { background: rgba(20, 10, 40, 0.65); border-color: rgba(194, 130, 255, 0.3); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(194,130,255,0.1); }
+        body.dark-mode section:hover { box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(194,130,255,0.2); }
+
+        /* --- PROFILE PICTURE SECTION --- */
+        .profile-frame {
+            position: relative; width: 200px; height: 200px; margin: 0 auto 20px auto;
+            border-radius: 50%; padding: 10px; background: rgba(255,255,255,0.4); backdrop-filter: blur(10px);
+            border: 3px dashed #ff758f; box-shadow: 0 15px 40px rgba(255,117,143,0.3);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .profile-frame:hover { transform: scale(1.05) rotate(2deg); }
+        body.dark-mode .profile-frame { background: rgba(0,0,0,0.4); border-color: #c282ff; box-shadow: 0 15px 40px rgba(194,130,255,0.4); }
+        
+        .profile-pic { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; background: #e0e0e0; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        
+        .crown-emoji {
+            position: absolute; top: -20px; right: -10px; font-size: 4rem; transform: rotate(15deg);
+            filter: drop-shadow(0 5px 15px rgba(255,215,0,0.6)); animation: orbFloat 3s ease-in-out infinite alternate;
+        }
+
+        .section-title { font-family: 'Outfit', sans-serif; font-size: 2.4rem; font-weight: 800; margin-top: 0; margin-bottom: 20px; color: #ff758f; text-shadow: 2px 2px 0px #fff; }
+        body.dark-mode .section-title { color: #b399ff; text-shadow: 2px 2px 0px #000; }
+        .section-subtitle { font-weight: 500; font-size: 1.1rem; opacity: 0.8; margin-top: -15px; margin-bottom: 30px; }
+
+        .birthday-letter { font-size: 1.3rem; line-height: 1.8; text-align: left; }
+        body.dark-mode .birthday-letter { color: #e0d6ff; }
+        .signature { font-family: 'Caveat', cursive; font-size: 2.8rem; color: #ff758f; margin-top: 20px; text-align: right; display: block; }
+        body.dark-mode .signature { color: #c282ff; }
+
+        /* --- BUTTONS & INPUTS --- */
+        .action-btn, .quiz-btn { background: linear-gradient(135deg, #ffb3c6, #ffcbf2); color: #5a3d5c; border: 2px solid #fff; padding: 16px 35px; border-radius: 40px; font-size: 1.15rem; font-family: 'Fredoka', sans-serif; font-weight: 600; cursor: pointer; box-shadow: 0 8px 20px rgba(0,0,0,0.1); transition: all 0.3s ease; }
+        .action-btn:hover, .quiz-btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 12px 25px rgba(0,0,0,0.2); background: linear-gradient(135deg, #ffcbf2, #ffb3c6); color: #ff4d6d; }
+        body.dark-mode .action-btn, body.dark-mode .quiz-btn { background: linear-gradient(135deg, #7b2cbf, #5a189a); color: #fff; border-color: rgba(194,130,255,0.4); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+        body.dark-mode .action-btn:hover, body.dark-mode .quiz-btn:hover { background: linear-gradient(135deg, #9d4edd, #7b2cbf); box-shadow: 0 12px 25px rgba(157,78,221,0.6); }
+
+        .custom-input { width: 80%; max-width: 450px; padding: 18px; border-radius: 30px; border: 2px solid #fff; background: rgba(255,255,255,0.85); color: #5a3d5c; font-family: inherit; font-size: 1.15rem; text-align: center; margin-bottom: 20px; box-shadow: inset 0 3px 10px rgba(0,0,0,0.05); transition: 0.3s; box-sizing: border-box; }
+        .custom-input:focus { outline: none; border-color: #ff9eb5; background: #fff; box-shadow: 0 0 20px rgba(255, 158, 181, 0.4); }
+        body.dark-mode .custom-input { background: rgba(0,0,0,0.5); color: #fff; border-color: rgba(194,130,255,0.3); }
+        body.dark-mode .custom-input:focus { border-color: #c282ff; box-shadow: 0 0 20px rgba(194,130,255,0.4); }
+
+        /* --- POLAROID BOARD --- */
+        .polaroid-board { position: relative; width: 100%; height: 500px; overflow: hidden; border-radius: 25px; background: rgba(255, 255, 255, 0.2); border: 2px dashed rgba(255, 179, 198, 0.8); box-shadow: inset 0 0 20px rgba(255,255,255,0.4); touch-action: none; transition: background 0.5s ease; }
+        body.dark-mode .polaroid-board { background: rgba(0, 0, 0, 0.2); border-color: rgba(194, 130, 255, 0.4); box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
+        
+        .polaroid { position: absolute; background: #fff; padding: 12px 12px 40px 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); cursor: grab; user-select: none; width: 180px; border-radius: 8px; box-sizing: border-box; transition: box-shadow 0.2s ease, background 0.8s ease; }
+        .polaroid:active { cursor: grabbing; box-shadow: 0 25px 50px rgba(0,0,0,0.25); z-index: 50; }
+        body.dark-mode .polaroid { background: #1e1332; border: 1px solid rgba(194,130,255,0.2); box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
+        
+        .polaroid::before { content: ''; position: absolute; top: -12px; left: 50%; transform: translateX(-50%) rotate(-2deg); width: 80px; height: 28px; background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(5px); box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 2px dashed rgba(0,0,0,0.1); border-right: 2px dashed rgba(0,0,0,0.1); z-index: 2; transition: background 0.8s ease; } 
+        body.dark-mode .polaroid::before { background: rgba(255, 255, 255, 0.15); border-color: rgba(255,255,255,0.05); }
+        .polaroid img { width: 100%; height: 180px; object-fit: cover; background: #e0e0e0; pointer-events: none; border-radius: 4px; }
+        .polaroid-caption { color: #5a3d5c; font-family: 'Caveat', cursive; font-size: 1.6rem; margin-top: 10px; pointer-events: none; line-height: 1; }
+        body.dark-mode .polaroid-caption { color: #d4cce3; }
+
+        .like-overlay { position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%) scale(0); font-size: 4.5rem; opacity: 0; pointer-events: none; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s; text-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 55; }
+        .polaroid.liked .like-overlay { transform: translate(-50%, -50%) scale(1); opacity: 1; animation: floatAwayHeart 1s forwards 0.5s; }
+        @keyframes floatAwayHeart { 0% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(-50%, -100%) scale(1.3); opacity: 0; } }
+
+        /* --- COMPONENT STYLES --- */
+        #coupon-display { font-size: 1.8rem; font-weight: 600; color: #ff758f; margin: 20px 0; min-height: 45px; display: flex; align-items: center; justify-content: center; }
+        body.dark-mode #coupon-display { color: #c282ff; }
+        
+        .quiz-container { width: 100%; max-width: 550px; margin: 0 auto; text-align: center; }
+        .quiz-btn { width: 100%; margin: 8px 0; text-align: center; }
+        #quiz-error { display: none; color: #fff; background: #ff758f; padding: 15px; border-radius: 20px; margin-top: 15px; font-weight: 600; font-size: 1.1rem; }
+        body.dark-mode #quiz-error { background: #5a189a; border-color: #b399ff; }
+        #quiz-result { display: none; font-size: 1.8rem; font-weight: 600; color: #ff758f; margin-top: 20px; }
+        body.dark-mode #quiz-result { color: #c282ff; }
+
+        /* --- UPGRADED VIP SCRATCH TICKET --- */
+        .scratch-ticket {
+            position: relative; width: 100%; max-width: 500px; height: 250px; margin: 0 auto;
+            border-radius: 20px; overflow: hidden;
+            background: linear-gradient(135deg, #1f1c2c 0%, #150921 100%);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3), inset 0 0 0 4px #ffb3c6;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .scratch-hidden-content { font-family: 'Outfit', sans-serif; text-align: center; padding: 20px; z-index: 1; }
+        .scratch-hidden-content h3 { 
+            background: linear-gradient(to right, #ffd700, #ffaa00, #ffd700);
+            background-size: 200% auto; -webkit-background-clip: text; color: transparent;
+            font-size: 3.2rem; margin: 0 0 10px 0; text-shadow: 0 0 20px rgba(255,215,0,0.3); letter-spacing: 1px;
+            animation: textGradientMove 3s linear infinite;
+        }
+        .scratch-hidden-content p { font-family: 'Fredoka', sans-serif; font-size: 1.4rem; color: #e0d6ff; margin: 0; font-weight: 600; opacity: 0.9; text-shadow: 0 2px 5px #000; }
+        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; touch-action: none; border-radius: 20px; z-index: 2; cursor: pointer; }
+
+        .shake-animation { animation: errorShake 0.4s; }
+        @keyframes errorShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+        /* --- THE WANDERING CAT --- */
+        #wandering-cat { position: fixed; top: 50%; left: 50%; font-size: 3.5rem; z-index: 9999; cursor: grab; user-select: none; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2)); -webkit-tap-highlight-color: transparent; }
+        .cat-action { position: fixed; font-size: 1.8rem; z-index: 10000; animation: floatUpText 2s forwards; pointer-events: none; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3)); }
+        @keyframes floatUpText { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-50px) scale(1.5); } }
+
+        /* --- TOGGLES --- */
+        .theme-toggle-btn, .easter-egg-btn { 
+            position: fixed; width: 55px; height: 55px; background: rgba(255,255,255,0.8); backdrop-filter: blur(12px); border: 2px solid #fff; border-radius: 50%; cursor: pointer; z-index: 100; font-size: 1.6rem; box-shadow: 0 10px 25px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; 
+        }
+        .theme-toggle-btn { right: 25px; top: 25px; }
+        .easter-egg-btn { right: 25px; bottom: 25px; width: 45px; height: 45px; font-size: 1.2rem; }
+        .theme-toggle-btn:hover, .easter-egg-btn:hover { background: #fff; transform: scale(1.1); box-shadow: 0 15px 30px rgba(0,0,0,0.25); }
+        body.dark-mode .theme-toggle-btn, body.dark-mode .easter-egg-btn { background: rgba(20, 10, 40, 0.8); border-color: rgba(194, 130, 255, 0.5); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        body.dark-mode .theme-toggle-btn:hover, body.dark-mode .easter-egg-btn:hover { background: #2a1b3d; }
+
+        #easter-egg-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255,255,255,0.95); backdrop-filter: blur(25px); padding: 40px; border-radius: 40px; z-index: 200; box-shadow: 0 20px 60px rgba(0,0,0,0.3); border: 2px solid #fff; text-align: center; width: 85%; max-width: 400px; box-sizing: border-box; }
+        body.dark-mode #easter-egg-modal { background: rgba(20, 10, 40, 0.98); border-color: rgba(194, 130, 255, 0.5); box-shadow: 0 20px 60px rgba(0,0,0,0.7); }
+        #easter-egg-modal img { width: 100%; max-width: 250px; border-radius: 20px; border: 4px solid #111; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+
+        /* --- CIRCLE V (VINYL) BEAUTIFUL GLASS MUSIC PLAYER --- */
+        .music-glass-pill {
+            position: fixed; left: 30px; bottom: 30px; z-index: 101;
+            display: flex; align-items: center; justify-content: flex-start;
+            background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border-radius: 50px; border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15), inset 0 0 15px rgba(255,255,255,0.5);
+            padding: 10px 20px 10px 15px; width: 280px; box-sizing: border-box;
+            transition: all 0.5s ease;
+        }
+        body.dark-mode .music-glass-pill { background: rgba(20, 10, 40, 0.85); border-color: rgba(194, 130, 255, 0.4); box-shadow: 0 15px 35px rgba(0,0,0,0.5), inset 0 0 15px rgba(194,130,255,0.2); }
+
+        .play-btn {
+            background: linear-gradient(135deg, #ffb3c6, #ff758f); color: #fff; border: none;
+            width: 45px; height: 45px; border-radius: 50%; font-size: 1.2rem; cursor: pointer;
+            display: flex; justify-content: center; align-items: center; flex-shrink: 0;
+            box-shadow: 0 5px 15px rgba(255,117,143,0.4); transition: transform 0.2s; margin-right: 15px;
+        }
+        body.dark-mode .play-btn { background: linear-gradient(135deg, #9d4edd, #7b2cbf); box-shadow: 0 5px 15px rgba(157,78,221,0.4); }
+        .play-btn:hover { transform: scale(1.1); }
+
+        .player-text { display: flex; flex-direction: column; text-align: left; flex-grow: 1; margin-right: 35px; }
+        .song-title { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.1rem; color: #ff758f; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        body.dark-mode .song-title { color: #c282ff; }
+        .song-artist { font-size: 0.85rem; font-weight: 500; opacity: 0.7; margin-bottom: 5px; }
+
+        .progress-container { width: 100%; height: 6px; background: rgba(0,0,0,0.1); border-radius: 3px; cursor: pointer; position: relative; transition: height 0.2s; }
+        .progress-container:hover { height: 10px; }
+        body.dark-mode .progress-container { background: rgba(255,255,255,0.15); }
+        .progress-bar { width: 0%; height: 100%; background: #ff758f; transition: width 0.1s linear; border-radius: 3px; pointer-events: none; position: relative; }
+        body.dark-mode .progress-bar { background: #c282ff; }
+        .progress-bar::after { content:''; position:absolute; right:-5px; top:50%; transform:translateY(-50%); width:10px; height:10px; background:#fff; border-radius:50%; box-shadow:0 0 5px rgba(0,0,0,0.3); opacity: 0; transition: opacity 0.2s; }
+        .progress-container:hover .progress-bar::after { opacity: 1; }
+
+        .vinyl-circle {
+            position: absolute; right: -25px; top: 50%; transform: translateY(-50%);
+            width: 75px; height: 75px; border-radius: 50%; background: #222;
+            background-image: url('bts-cover.jpg'); background-size: cover; background-position: center;
+            border: 3px solid #ffb3c6; box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            animation: spin 4s linear infinite; animation-play-state: paused; cursor: pointer;
+            display: flex; justify-content: center; align-items: center; transition: border-color 0.8s;
+        }
+        body.dark-mode .vinyl-circle { border-color: #7b2cbf; box-shadow: 0 8px 20px rgba(0,0,0,0.6); }
+        .vinyl-circle.playing { animation-play-state: running; }
+        .vinyl-circle::after { content: ''; width: 16px; height: 16px; background: rgba(255, 255, 255, 0.8); border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 5px rgba(0,0,0,0.5); }
+        body.dark-mode .vinyl-circle::after { background: #5a189a; border-color: #c282ff; }
+
+        @keyframes spin { 100% { transform: translateY(-50%) rotate(360deg); } }
+
+        /* --- MOBILE OPTIMIZATIONS --- */
+        @media (max-width: 800px) {
+            .interactive-header { font-size: 3.5rem; letter-spacing: 1px; }
+            section { padding: 40px 25px; width: 92%; border-radius: 25px; }
+            
+            .profile-frame { width: 160px; height: 160px; }
+            
+            .glass-orb { width: 130px; height: 130px; }
+            #gift-message { font-size: 2.8rem; }
+            .polaroid-board { height: 420px; }
+            .polaroid { width: 140px; padding: 10px 10px 35px 10px; }
+            .polaroid img { height: 140px; }
+            .polaroid-caption { font-size: 1.3rem; }
+            #wandering-cat { font-size: 3rem; }
+            
+            /* Center the music player on mobile */
+            .music-glass-pill { left: 50%; transform: translateX(-50%); width: 290px; bottom: 20px; padding-left: 10px; }
+            .play-btn { width: 40px; height: 40px; font-size: 1rem; margin-right: 10px; }
+            .vinyl-circle { width: 65px; height: 65px; right: -15px; border-width: 2px; }
+            .player-text { margin-right: 40px; }
+            
+            .theme-toggle-btn { width: 45px; height: 45px; font-size: 1.3rem; right: 15px; top: 15px; }
+            .easter-egg-btn { right: 15px; bottom: 100px; width: 40px; height: 40px; font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Backdrops with Soft Overlay -->
+    <div class="bg-light"></div>
+    <div class="bg-dark"></div>
+    <div class="bg-overlay"></div>
+
+    <!-- The Interactive Virtual Cat -->
+    <div id="wandering-cat" title="Pet me!">🐈</div>
+
+    <header>
+        <h1 class="interactive-header" onclick="headerExplosion()">HAPPY 17TH, MAYA!</h1>
+    </header>
+
+    <div class="gift-wrapper">
+        <div class="glass-orb" id="the-orb" onclick="openGift()">
+            <div class="orb-inner">TAP TO UNLOCK</div>
+        </div>
+        <div id="gift-message">LEVEL 17 UNLOCKED! ✨</div>
+    </div>
+
+    <!-- HIGH-END MINIMALIST FLOW -->
+    <div class="content-flow">
+        
+        <!-- MAIN CHARACTER PROFILE PICTURE SECTION -->
+        <section class="fade-section" style="text-align: center;">
+            <div class="profile-frame">
+                <!-- Reminder: Rename your picture to maya-profile.jpg -->
+                <img src="maya-profile.jpg" alt="Maya" class="profile-pic">
+                <div class="crown-emoji">👑</div>
+            </div>
+            <h2 class="section-title" style="font-size: 2.8rem; margin-top: 15px;">The Main Character</h2>
+            <p class="section-subtitle">Level 17 officially unlocked.</p>
+        </section>
+
+        <!-- Note -->
+        <section class="fade-section">
+            <h2 class="section-title">A Note From Me</h2>
+            <div class="birthday-letter">
+                Happy 17th birthday, Maya! You are the one person who tolerates my absolute nonsense and actively contributes to it. I was going to write something deeply emotional and tear-jerking, but let’s be real, neither of us has the attention span for that.<br><br>
+                It is genuinely a medical miracle that you have made it to seventeen given your complete lack of survival instincts, but I am incredibly glad you did. Here is to another year of terrible decisions, endless complaining about being tired when you did absolutely nothing, and me continuing to be the objectively better influence in this friendship.<br>
+                <span class="signature">- Your fav, Radhey ✌</span>
+            </div>
+        </section>
+
+        <!-- Aesthetic Moodboard -->
+        <section class="fade-section">
+            <h2 class="section-title">Maya's Moodboard ✨</h2>
+            <p class="section-subtitle">Drag photos around. Double-tap to like! 💖</p>
+            <div class="polaroid-board" id="polaroid-board">
+                <!-- Reminder: Rename your images to mood1.jpg, mood2.jpg, mood3.jpg -->
+                <div class="polaroid drag-item" style="top: 10%; left: 8%;" data-rot="-5">
+                    <img src="mood1.jpg" alt="Memory">
+                    <div class="polaroid-caption">Lost in the moment</div>
+                    <div class="like-overlay">💖</div>
+                </div>
+                <div class="polaroid drag-item" style="top: 25%; right: 8%;" data-rot="6">
+                    <img src="mood2.jpg" alt="Memory">
+                    <div class="polaroid-caption">Favourite memories</div>
+                    <div class="like-overlay">💖</div>
+                </div>
+                <div class="polaroid drag-item" style="bottom: 10%; left: 30%;" data-rot="-3">
+                    <img src="mood3.jpg" alt="Memory">
+                    <div class="polaroid-caption">Matching energy</div>
+                    <div class="like-overlay">💖</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sarcastic 8-Ball -->
+        <section class="fade-section">
+            <h2 class="section-title">The Sarcastic 8-Ball</h2>
+            <p class="section-subtitle">Ask a yes or no question. Prepare to be judged.</p>
+            <input type="text" id="eight-ball-input" class="custom-input" placeholder="Type your question here...">
+            <br>
+            <button class="action-btn" style="width:auto;" onclick="askEightBall()">Shake the 8-Ball 🔮</button>
+            <div id="eight-ball-response" style="margin-top:20px; font-family:'Outfit', sans-serif; font-size:1.5rem; font-weight:700; color:#ff758f; display:none;"></div>
+        </section>
+
+        <!-- Coupon Dispenser -->
+        <section class="fade-section">
+            <h2 class="section-title">Bestie Coupons</h2>
+            <p class="section-subtitle">Because buying a real gift was out of budget.</p>
+            <div id="coupon-display">🎟️ Tap below to reveal 🎟️</div>
+            <button class="action-btn" style="width:auto;" onclick="generateCoupon()">Generate Ticket ✨</button>
+        </section>
+
+        <!-- The 10-Question Ultimate Anime Quiz -->
+        <section class="fade-section">
+            <h2 class="section-title">The Ultimate Anime Test</h2>
+            <p class="section-subtitle">Let's see if you've actually been paying attention to your favorite shows.</p>
+            <div class="quiz-container" id="quiz-box">
+                <h3 id="question-text" style="font-family:'Fredoka', sans-serif; font-weight:600; margin-bottom: 20px; font-size:1.25rem;">Loading...</h3>
+                <div id="options-box"></div>
+                <div id="quiz-error"></div>
+            </div>
+            <div id="quiz-result"></div>
+        </section>
+
+        <!-- Secret Vault -->
+        <section class="fade-section">
+            <h2 class="section-title">The Secret Vault</h2>
+            <p class="section-subtitle">Hint: Who is the literal peakest guy in the world?</p>
+            <div id="vault-locked">
+                <input type="password" id="vault-passcode" class="custom-input" placeholder="Enter Passcode...">
+                <br>
+                <button class="action-btn" style="width:auto;" onclick="unlockVault()">Unlock 🔓</button>
+                <div id="vault-error" style="color:#ff758f; font-size:1.05rem; margin-top:15px; display:none; font-weight:600;">Incorrect. Try again bestie.</div>
+            </div>
+            <div id="vault-unlocked" style="display:none; background: rgba(255,255,255,0.6); border-radius: 25px; border: 2px solid #fff; padding: 30px; margin-top: 15px;">
+                <h3 style="font-family:'Outfit', sans-serif; color: #ff758f; font-size: 2rem; margin:0;">🔓 Vault Unlocked!</h3>
+                <p style="font-size: 1.25rem; margin-top: 10px;">Here is your digital gift card code: <br><strong style="font-size:1.8rem; letter-spacing: 2px; display:block; margin-top:10px;">ABCD-1234-WXYZ</strong></p>
+            </div>
+        </section>
+
+        <!-- MASSIVELY UPGRADED: Holographic Foil Scratch Ticket -->
+        <section class="fade-section">
+            <h2 class="section-title">The Final Prize</h2>
+            <p class="section-subtitle">Scratch off the silver foil to claim your birthday gift.</p>
+            
+            <div class="scratch-ticket">
+                <!-- The awesome prize hidden underneath -->
+                <div class="scratch-hidden-content">
+                    <h3>☕ 1x Free Iced Coffee</h3>
+                    <p>Redeemable immediately. Happy Birthday!</p>
+                </div>
+                <!-- The Foil Canvas -->
+                <canvas id="scratch-pad"></canvas>
+            </div>
+            
+        </section>
+
+    </div>
+
+    <!-- Toggles -->
+    <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Theme">🌙</button>
+    <button class="easter-egg-btn" onclick="triggerEasterEgg()" title="Secret">🫧</button>
+
+    <div id="easter-egg-modal">
+        <h2 style="font-family:'Outfit', sans-serif; margin-bottom: 10px; margin-top:0;">You found the secret! 🍎</h2>
+        <p style="font-size:1.1rem; opacity:0.8; margin-bottom: 20px;">I know you love this one.</p>
+        <img src="anime3.jpg" alt="Death Note">
+        <br><br><button class="action-btn" onclick="document.getElementById('easter-egg-modal').style.display='none'" style="margin-top:15px; width:auto;">Hide</button>
+    </div>
+
+    <!-- CIRCLE V BEAUTIFUL GLASS MUSIC PILL -->
+    <div class="music-glass-pill" id="music-player">
+        
+        <button class="play-btn" onclick="toggleMusic()" id="play-pause-btn">▶</button>
+        
+        <div class="player-text">
+            <h3 class="song-title">Fake Love</h3>
+            <div class="song-artist">BTS</div>
+            
+            <!-- Functional Seek Slider -->
+            <div class="progress-container" id="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+        </div>
+        
+        <!-- The Circle Vinyl overlapping the edge -->
+        <!-- Reminder: Rename your cover picture to bts-cover.jpg -->
+        <div class="vinyl-circle" id="vinyl-circle" onclick="toggleMusic()"></div>
+        
+        <audio id="bg-music" loop>
+            <source src="song.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <script>
+        // --- GLOBAL SOUND EFFECTS SETUP (No general click sound as requested) ---
+        const sfxCorrect = new Audio('correct.mp3');
+        const sfxWrong = new Audio('wrong.mp3');
+        const sfxScratch = new Audio('scratch.mp3');
+        sfxScratch.loop = true; // Loops nicely while holding down
+
+        // --- SCROLL REVEAL ANIMATION ---
+        const observerOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target); 
+                }
+            });
+        }, observerOptions);
+        setTimeout(() => {
+            document.querySelectorAll('.fade-section').forEach(el => observer.observe(el));
+        }, 300);
+
+        // --- THEME TOGGLE LOGIC ---
+        let isDarkMode = false;
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark-mode');
+            const btn = document.querySelector('.theme-toggle-btn');
+            btn.innerText = isDarkMode ? '☀️' : '🌙';
+            if(window.initCanvas) initCanvas();
+        }
+
+        // --- SPARKLE MOUSE TRAIL ---
+        document.addEventListener('mousemove', function(e) {
+            if(Math.random() > 0.3) return;
+            let sparkle = document.createElement('div');
+            sparkle.innerText = isDarkMode ? '✨' : '🌸';
+            sparkle.style.position = 'fixed'; sparkle.style.left = e.clientX + 'px'; sparkle.style.top = e.clientY + 'px';
+            sparkle.style.pointerEvents = 'none'; sparkle.style.zIndex = '9999';
+            sparkle.style.opacity = '0.7'; sparkle.style.fontSize = (Math.random() * 8 + 10) + 'px';
+            sparkle.style.transition = 'all 0.6s ease'; document.body.appendChild(sparkle);
+            setTimeout(() => { sparkle.style.transform = `translate(${Math.random() * 40 - 20}px, ${Math.random() * 40 + 20}px) scale(0)`; sparkle.style.opacity = '0'; }, 10);
+            setTimeout(() => { sparkle.remove(); }, 600);
+        });
+
+        // --- HEADER EXPLOSION LOGIC ---
+        function headerExplosion() { 
+            const colors = isDarkMode ? ['#fff', '#9d4edd', '#c282ff'] : ['#fff', '#ffb3c6', '#ff758f'];
+            confetti({ particleCount: 150, spread: 100, origin: { y: 0.1 }, colors: colors, startVelocity: 40 }); 
+        }
+
+        // --- CONTINUOUS CONFETTI LOGIC ---
+        function startContinuousConfetti() {
+            var duration = 8 * 1000; var animationEnd = Date.now() + duration; var defaults = { startVelocity: 20, spread: 360, ticks: 60, zIndex: 0 };
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now(); if (timeLeft <= 0) return clearInterval(interval);
+                var particleCount = 30 * (timeLeft / duration); const colors = isDarkMode ? ['#7b2cbf', '#c282ff', '#ffffff'] : ['#ffb3c6', '#ff758f', '#ffffff'];
+                confetti(Object.assign({}, defaults, { particleCount, colors: colors, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, colors: colors, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 350);
+        }
+        window.onload = () => { startContinuousConfetti(); };
+
+        // --- SLEEK UNLOCK BUTTON LOGIC ---
+        function openGift() {
+            const btn = document.getElementById("the-orb"); btn.style.transform = "scale(0.5)"; btn.style.opacity = "0";
+            setTimeout(() => {
+                btn.style.display = "none"; document.getElementById("gift-message").style.display = "block";
+                const colors = isDarkMode ? ['#7b2cbf', '#c282ff', '#ffffff'] : ['#ff758f', '#ffb3c6', '#ffffff'];
+                confetti({ particleCount: 300, spread: 160, origin: { y: 0.4 }, colors: colors, startVelocity: 45 });
+            }, 300);
+        }
+
+        // --- INTERACTIVE WANDERING CAT ---
+        const cat = document.getElementById('wandering-cat');
+        let catX = window.innerWidth / 2; let catY = window.innerHeight / 2;
+        let catFacingRight = true; let catState = 'walking'; 
+        let walkTimeout, sleepTimeout, actionTimeout;
+
+        function updateCatTransform(instant = false) {
+            if (instant) cat.style.transition = 'none'; else cat.style.transition = 'transform 3s ease-in-out';
+            let rotation = catState === 'sleeping' ? 'rotate(80deg)' : '';
+            let scaleX = catFacingRight ? 'scaleX(-1)' : 'scaleX(1)';
+            cat.style.transform = `translate(${catX}px, ${catY}px) ${scaleX} ${rotation}`;
+        }
+
+        function resetSleepTimer() {
+            clearTimeout(sleepTimeout);
+            sleepTimeout = setTimeout(() => {
+                if (catState === 'walking' || catState === 'idle') { catState = 'sleeping'; cat.innerText = '🐈'; updateCatTransform(false); doCatAction('💤'); }
+            }, 10000); 
+        }
+
+        function moveCat() {
+            if (catState !== 'walking' && catState !== 'idle') return;
+            catState = 'walking'; cat.innerText = '🐈';
+            const nextX = Math.random() * (window.innerWidth - 80) + 20; const nextY = Math.random() * (window.innerHeight - 80) + 20;
+            catFacingRight = nextX > catX; catX = nextX; catY = nextY;
+            updateCatTransform();
+            clearTimeout(walkTimeout);
+            walkTimeout = setTimeout(() => { if (catState === 'walking') { if (Math.random() > 0.6) doCatAction(); moveCat(); } }, 3000 + Math.random() * 2000);
+        }
+
+        function doCatAction(forcedAction = null) {
+            const actions = ['💕', '✨', '🐾', 'meow~']; const action = forcedAction || actions[Math.floor(Math.random() * actions.length)];
+            const actionEl = document.createElement('div'); actionEl.innerText = action; actionEl.className = 'cat-action';
+            actionEl.style.left = (catX + (catFacingRight ? -20 : 20)) + 'px'; actionEl.style.top = (catY - 20) + 'px'; document.body.appendChild(actionEl);
+            setTimeout(() => actionEl.remove(), 2000);
+            if (catState === 'sleeping') { clearTimeout(actionTimeout); actionTimeout = setTimeout(() => { if (catState === 'sleeping') doCatAction('💤'); }, 2000); }
+        }
+
+        let isDraggingCat = false; let dragOffsetX = 0; let dragOffsetY = 0;
+        function startCatDrag(e) {
+            if (catState === 'sleeping') { catState = 'idle'; cat.innerText = '🙀'; doCatAction('⁉️'); updateCatTransform(true); resetSleepTimer(); setTimeout(moveCat, 1500); return; }
+            isDraggingCat = true; catState = 'dragging'; cat.innerText = '🙀'; clearTimeout(walkTimeout);
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX; const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            const rect = cat.getBoundingClientRect(); dragOffsetX = clientX - rect.left; dragOffsetY = clientY - rect.top; cat.style.transition = 'none'; 
+        }
+        function dragCat(e) {
+            if (!isDraggingCat) return; e.preventDefault();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX; const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            catX = clientX - dragOffsetX; catY = clientY - dragOffsetY;
+            cat.style.transform = `translate(${catX}px, ${catY}px) ${catFacingRight ? 'scaleX(-1)' : 'scaleX(1)'} scale(1.15)`;
+        }
+        function stopCatDrag(e) {
+            if (!isDraggingCat) return; isDraggingCat = false;
+            catState = 'petted'; cat.innerText = '😻'; doCatAction('💖'); updateCatTransform(false); resetSleepTimer();
+            setTimeout(() => { if (catState === 'petted') moveCat(); }, 2000);
+        }
+
+        cat.addEventListener('mousedown', startCatDrag); document.addEventListener('mousemove', dragCat); document.addEventListener('mouseup', stopCatDrag);
+        cat.addEventListener('touchstart', startCatDrag, {passive: false}); document.addEventListener('touchmove', dragCat, {passive: false}); document.addEventListener('touchend', stopCatDrag);
+        resetSleepTimer(); setTimeout(moveCat, 1000);
+
+        // --- DRAGGABLE POLAROID LOGIC & LIKING ---
+        let activePolaroid = null, initX, initY, curX, curY, highZ = 50; let lastTap = 0;
+
+        function triggerLike(item) {
+            item.classList.remove('liked'); void item.offsetWidth; item.classList.add('liked');
+            const rect = item.getBoundingClientRect(); const colors = isDarkMode ? ['#c282ff', '#ffffff'] : ['#ff758f', '#ffffff'];
+            confetti({ particleCount: 20, spread: 50, startVelocity: 15, origin: { x: (rect.left + rect.width / 2) / window.innerWidth, y: (rect.top + rect.height / 2) / window.innerHeight }, colors: colors, zIndex: 1000 });
+        }
+
+        function attachPoloDrag(item) {
+            item.addEventListener('mousedown', startPoloDrag); item.addEventListener('touchstart', startPoloDrag, {passive: false});
+            item.addEventListener('dblclick', () => triggerLike(item));
+            item.addEventListener('touchend', (e) => {
+                let currentTime = new Date().getTime(); let tapLength = currentTime - lastTap;
+                if (tapLength < 400 && tapLength > 0) { triggerLike(item); e.preventDefault(); } lastTap = currentTime;
+            });
+        }
+        const poloItems = document.querySelectorAll('.drag-item'); poloItems.forEach(item => { attachPoloDrag(item); });
+        document.addEventListener('mousemove', movePolo); document.addEventListener('touchmove', movePolo, {passive: false});
+        document.addEventListener('mouseup', stopPoloDrag); document.addEventListener('touchend', stopPoloDrag);
+
+        function startPoloDrag(e) {
+            if (e.target.closest('.drag-item') && e.target.className !== 'like-overlay') {
+                activePolaroid = e.target.closest('.drag-item');
+                if (e.type === "touchstart") { initX = e.touches[0].clientX - (activePolaroid.dataset.xOffset || 0); initY = e.touches[0].clientY - (activePolaroid.dataset.yOffset || 0); } 
+                else { initX = e.clientX - (activePolaroid.dataset.xOffset || 0); initY = e.clientY - (activePolaroid.dataset.yOffset || 0); }
+                highZ++; activePolaroid.style.zIndex = highZ; activePolaroid.style.transition = 'box-shadow 0.2s ease, background 0.8s ease'; 
+            }
+        }
+        function movePolo(e) {
+            if (activePolaroid) {
+                e.preventDefault();
+                if (e.type === "touchmove") { curX = e.touches[0].clientX - initX; curY = e.touches[0].clientY - initY; } else { curX = e.clientX - initX; curY = e.clientY - initY; }
+                activePolaroid.dataset.xOffset = curX; activePolaroid.dataset.yOffset = curY;
+                const dragRot = (curX / window.innerWidth) * 10;
+                activePolaroid.style.transform = `translate(${curX}px, ${curY}px) rotate(${parseFloat(activePolaroid.dataset.rot) + dragRot}deg) scale(1.08)`;
+            }
+        }
+        function stopPoloDrag(e) {
+            if (activePolaroid) { 
+                activePolaroid.style.transition = 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                activePolaroid.style.transform = `translate(${activePolaroid.dataset.xOffset || 0}px, ${activePolaroid.dataset.yOffset || 0}px) rotate(${activePolaroid.dataset.rot}deg) scale(1)`; 
+                activePolaroid = null; 
+            }
+        }
+
+        // --- 8-BALL LOGIC ---
+        const eightBallResponses = ["Absolutely not.", "Why would you even ask that?", "I guess... if you lower your standards.", "Yes, but you're going to regret it.", "Signs point to 'you need a nap'.", "Don't count on it, bestie.", "My sources say 'yikes'."];
+        function askEightBall() {
+            const input = document.getElementById('eight-ball-input').value; const responseDiv = document.getElementById('eight-ball-response');
+            if(input.trim() === "") { responseDiv.innerText = "You have to actually type a question."; } 
+            else { responseDiv.innerText = "🔮 " + eightBallResponses[Math.floor(Math.random() * eightBallResponses.length)]; }
+            responseDiv.style.display = "block"; responseDiv.style.animation = 'smoothReveal 0.4s forwards';
+        }
+
+        // --- COUPON DISPENSER LOGIC ---
+        const couponList = ["🎟️ 10 mins of uninterrupted complaining", "🎟 I will reply to your text within 5 minutes", "🎟 One free iced coffee (paid for by you)", "🎟️ I agree to watch that one show", "🎟️ I won't judge your outfit today", "🎟 You pick the music in the car"];
+        function generateCoupon() { const d = document.getElementById("coupon-display"); d.style.animation = 'none'; d.offsetHeight; d.style.animation = 'smoothReveal 0.4s forwards'; d.innerText = couponList[Math.floor(Math.random() * couponList.length)]; }
+
+        // --- 10-QUESTION ANIME QUIZ LOGIC ---
+        const quizData = [
+            { q: "In 'Lovely Complex', what Japanese comedy duo are Risa and Otani always compared to?", options: ["All Hanshin-Kyojin", "Downtown", "Chidori", "Non Style"], correct: 0 },
+            { q: "In 'World's Greatest First Love', which manga department does Ritsu accidentally end up working for?", options: ["Shonen Jump", "Emerald", "Ruby", "Sapphire"], correct: 1 },
+            { q: "If you were to bribe Ryuk from 'Death Note', what is the ONLY acceptable currency?", options: ["Strawberry cake", "Potato chips", "Juicy red apples", "Black coffee"], correct: 2 },
+            { q: "What is the name of the bald rapper that Risa and Otani both obsess over in 'Lovely Complex'?", options: ["Umibozu", "Matsuoka", "Nakao", "Haruka"], correct: 0 },
+            { q: "What is Masamune Takano’s infamous bold promise to Ritsu Onodera?", options: ["'I will fire you.'", "'I'll make you fall in love with me again.'", "'You will write the best shojo manga.'", "'We are never speaking again.'"], correct: 1 },
+            { q: "Why do Risa and Otani originally agree to team up in 'Lovely Complex'?", options: ["To study for exams", "To sabotage the school play", "To help each other get their crushes", "To win a basketball match"], correct: 2 },
+            { q: "In 'World's Greatest First Love', what alias did Masamune Takano go by when he and Ritsu were in high school?", options: ["Saga", "Oda", "Yoshino", "Hatori"], correct: 0 },
+            { q: "What fake name does L use when he enrolls in the same university as Light Yagami?", options: ["Eraldo Coil", "Hideki Ryuga", "Deneuve", "Watari"], correct: 1 },
+            { q: "What is the main reason for Atsushi Otani's 'complex'?", options: ["His poor grades", "His short height", "His loud voice", "His inability to cook"], correct: 1 },
+            { q: "Which Shinigami sacrifices their life to save Misa Amane in 'Death Note'?", options: ["Ryuk", "Rem", "Gelus", "Sidoh"], correct: 2 }
+        ];
+        
+        const errorMessages = ["Incorrect! Are you even a real fan?!", "Wrong! Go re-watch the whole series.", "Oof, that was completely wrong.", "Nope! Try again."];
+        let currentQ = 0, mistakes = 0;
+        
+        function loadQuestion() {
+            if (currentQ >= quizData.length) { 
+                document.getElementById("quiz-box").style.display = "none"; 
+                const result = document.getElementById("quiz-result"); result.style.display = "block"; 
+                result.innerText = mistakes === 0 ? "Flawless victory! You are an anime genius! 🎉" : `You finished, but you made ${mistakes} mistakes. Go re-watch them! 🎬`; return; 
+            }
+            const q = quizData[currentQ]; document.getElementById("question-text").innerText = q.q; document.getElementById("quiz-error").style.display = "none";
+            const optionsBox = document.getElementById("options-box"); optionsBox.innerHTML = "";
+            q.options.forEach((opt, index) => { 
+                const btn = document.createElement("button"); btn.className = "quiz-btn"; btn.innerText = opt; 
+                btn.onclick = () => checkAnswer(index, q.correct); optionsBox.appendChild(btn); 
+            });
+        }
+        function checkAnswer(selected, correct) {
+            if (selected === correct) { 
+                sfxCorrect.currentTime = 0; sfxCorrect.play().catch(() => {});
+                currentQ++; loadQuestion(); 
+            } else {
+                sfxWrong.currentTime = 0; sfxWrong.play().catch(() => {});
+                mistakes++; const err = document.getElementById("quiz-error"); err.innerText = errorMessages[Math.floor(Math.random() * errorMessages.length)]; err.style.display = "block";
+                const qb = document.getElementById("quiz-box"); qb.classList.remove("shake-animation"); void qb.offsetWidth; qb.classList.add("shake-animation");
+            }
+        }
+        loadQuestion();
+
+        // --- SECRET VAULT LOGIC ---
+        function unlockVault() {
+            const pass = document.getElementById('vault-passcode').value.toLowerCase().trim();
+            const errorDiv = document.getElementById('vault-error'); const lockedDiv = document.getElementById('vault-locked');
+            if(pass === "radhey") { 
+                lockedDiv.style.display = "none"; document.getElementById('vault-unlocked').style.display = "block";
+                const colors = isDarkMode ? ['#9d4edd', '#c282ff', '#fff'] : ['#ffb3c6', '#ff758f', '#fff'];
+                confetti({particleCount: 150, spread: 80, origin: {y: 0.6}, colors: colors});
+            } else {
+                errorDiv.style.display = "block"; lockedDiv.classList.remove("shake-animation"); void lockedDiv.offsetWidth; lockedDiv.classList.add("shake-animation");
+            }
+        }
+
+        // --- PREMIUM SILVER FOIL SCRATCH OFF LOGIC ---
+        const canvas = document.getElementById("scratch-pad"), ctx = canvas.getContext("2d"); 
+        let isScraping = false;
+        
+        window.initCanvas = function() { 
+            canvas.width = canvas.parentElement.offsetWidth; canvas.height = canvas.parentElement.offsetHeight; 
+            
+            let grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            grad.addColorStop(0, "#e0e0e0"); 
+            grad.addColorStop(0.2, "#f8f8f8"); 
+            grad.addColorStop(0.5, "#b0b0b0"); 
+            grad.addColorStop(0.8, "#f8f8f8"); 
+            grad.addColorStop(1, "#c0c0c0");
+            
+            ctx.fillStyle = grad; 
+            ctx.fillRect(0, 0, canvas.width, canvas.height); 
+            
+            ctx.font = "800 28px 'Outfit'"; ctx.fillStyle = "rgba(0,0,0,0.5)"; ctx.textAlign = "center"; 
+            ctx.fillText("✨ SCRATCH HERE ✨", canvas.width/2, canvas.height/2 + 10); 
+        }
+        initCanvas();
+        
+        function scratchPad(e) { 
+            if (!isScraping) return; 
+            e.preventDefault(); 
+            const rect = canvas.getBoundingClientRect(); 
+            const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left; 
+            const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top; 
+            
+            ctx.globalCompositeOperation = "destination-out"; 
+            ctx.beginPath(); 
+            ctx.arc(x, y, 35, 0, Math.PI * 2);
+            ctx.fill(); 
+        }
+        
+        canvas.addEventListener("mousedown", () => { isScraping = true; sfxScratch.play().catch(() => {}); }); 
+        window.addEventListener("mouseup", () => { isScraping = false; sfxScratch.pause(); }); 
+        canvas.addEventListener("mouseleave", () => { isScraping = false; sfxScratch.pause(); }); 
+        canvas.addEventListener("mousemove", scratchPad); 
+        canvas.addEventListener("touchstart", (e) => { isScraping = true; sfxScratch.play().catch(() => {}); scratchPad(e); }, { passive: false }); 
+        window.addEventListener("touchend", () => { isScraping = false; sfxScratch.pause(); });
+
+        // --- EASTER EGG ---
+        function triggerEasterEgg() { document.getElementById("easter-egg-modal").style.display = "block"; }
+
+        // --- CIRCLE V (VINYL) GLASS PILL MUSIC PLAYER LOGIC ---
+        const audio = document.getElementById('bg-music');
+        const vinylCircle = document.getElementById('vinyl-circle');
+        const progressBar = document.getElementById('progress-bar');
+        const progressContainer = document.getElementById('progress-container');
+        const playBtn = document.getElementById('play-pause-btn');
+
+        function toggleMusic() {
+            if (audio.paused) {
+                audio.play(); 
+                playBtn.innerText = '⏸'; 
+                vinylCircle.classList.add('playing');
+            } else {
+                audio.pause(); 
+                playBtn.innerText = '▶'; 
+                vinylCircle.classList.remove('playing');
+            }
+        }
+
+        audio.addEventListener('timeupdate', () => {
+            if (audio.duration) { 
+                const progress = (audio.currentTime / audio.duration) * 100; 
+                progressBar.style.width = progress + '%'; 
+            }
+        });
+
+        progressContainer.addEventListener('click', (e) => {
+            const rect = progressContainer.getBoundingClientRect(); 
+            const clickX = e.clientX - rect.left;
+            if (audio.duration) { audio.currentTime = (clickX / rect.width) * audio.duration; }
+        });
+    </script>
+</body>
+</html>
